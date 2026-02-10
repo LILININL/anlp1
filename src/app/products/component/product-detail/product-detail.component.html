@@ -1,0 +1,16 @@
+<h2>Product Detail</h2>
+
+<div *ngIf="loading">กำลังโหลด...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngIf="product">
+  <div><strong>ID:</strong> {{ product.id }}</div>
+  <div><strong>Name:</strong> {{ product.name }}</div>
+  <div><strong>SKU:</strong> {{ product.sku || '-' }}</div>
+  <div><strong>Price:</strong> {{ product.price }}</div>
+  <div><strong>Created:</strong> {{ product.created_at }}</div>
+</div>
+
+<div style="margin-top: 12px;">
+  <a [routerLink]="['/products']">กลับไปหน้ารายการ</a>
+</div>

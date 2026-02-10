@@ -1,0 +1,26 @@
+<h2>Notes ของผู้ใช้ {{ userName }} ({{ '#' + userId }})</h2>
+
+<div *ngIf="loading">กำลังโหลด...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngIf="!loading && !error && notes.length === 0">ไม่มีโน้ตของผู้ใช้นี้</div>
+
+<div *ngFor="let n of notes; trackBy: trackById">
+  <div><strong>Title:</strong> {{ n.title }}</div>
+  <div>
+    <strong>Status:</strong>
+    <span style="margin-right: 8px;">{{ n.status }}</span>
+    <button type="button" (click)="updateStatus(n, 'open')" [disabled]="n.status === 'open'">open</button>
+    <button type="button" (click)="updateStatus(n, 'in_progress')" [disabled]="n.status === 'in_progress'">in_progress</button>
+    <button type="button" (click)="updateStatus(n, 'done')" [disabled]="n.status === 'done'">done</button>
+  </div>
+  <div><strong>Product ID:</strong> {{ n.product_id ?? '-' }}</div>
+  <div><strong>Created:</strong> {{ n.created_at }}</div>
+  <div><strong>Updated:</strong> {{ n.updated_at }}</div>
+  <div *ngIf="n.body"><strong>Body:</strong> {{ n.body }}</div>
+  <hr />
+</div>
+
+<div style="margin-top: 12px;">
+  <a [routerLink]="['/users']">กลับไปหน้าผู้ใช้</a>
+</div>

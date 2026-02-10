@@ -1,0 +1,13 @@
+<h2>Products</h2>
+
+<div *ngIf="loading">กำลังโหลด...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngFor="let p of products; trackBy: trackById">
+  <div>
+    {{ p.name }}
+  </div>
+  <div>SKU: {{ p.sku || '-' }}</div>
+  <div>Price: {{ p.price }}</div>
+  <hr />
+</div>

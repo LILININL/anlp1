@@ -6,15 +6,16 @@ export interface UserListDto {
   id: number;
   email: string;
   display_name: string;
-  is_active: string;
+  is_active: boolean;
   created_at: string;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class UserListService {
-  private apiUrl = 'http://localhost:5134/api';
+  private get apiUrl(): string {
+    return apiUrl;
+  }
 
   constructor(private http: HttpClient) { }
 
@@ -25,4 +26,20 @@ export class UserListService {
   getUserById(id: number): Observable<UserListDto> {
     return this.http.get<UserListDto>(`${this.apiUrl}/users/${id}`);
   }
+
+  updateDisplayName(id: number, display_name: string) {
+    return this.http.put<UserListDto>(
+      `${this.apiUrl}/users/${id}/display-name`,
+      { display_name }
+    );
+  }
+
+  updateActiveStatus(id: number, is_active: boolean) {
+    return this.http.put<UserListDto>(
+      `${this.apiUrl}/users/${id}/is-active`,
+      { is_active }
+    );
+  }
+
+
 }

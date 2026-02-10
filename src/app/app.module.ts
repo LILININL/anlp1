@@ -1,8 +1,16 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UsersModule } from './users/users.module';
+import { AppConfigService } from './core/app-config.service';
+import { AppRoutingModule } from './app-routing.module';
+import { ProductsModule } from './products/products.module';
+import { NotesModule } from './notes/notes.module';
+
+export function initConfig(cfg: AppConfigService) {
+  return () => cfg.load();
+}
 
 
 @NgModule({
@@ -12,9 +20,14 @@ import { UsersModule } from './users/users.module';
   imports: [
     BrowserModule,
     HttpClientModule,
-    UsersModule
+    UsersModule,
+    ProductsModule,
+    NotesModule,
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    { provide: APP_INITIALIZER, useFactory: initConfig, deps: [AppConfigService], multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

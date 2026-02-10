@@ -1,11 +1,6 @@
-<style>
-  .body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-</style>
-<app-user-list></app-user-list>
-<div class="body"> helloworld </div>
+<nav style="display:flex; gap:12px; margin-bottom:12px;">
+  <a routerLink="/users" routerLinkActive="active">Users</a>
+  <a routerLink="/products" routerLinkActive="active">Products</a>
+</nav>
 
+<router-outlet></router-outlet>

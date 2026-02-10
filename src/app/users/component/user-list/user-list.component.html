@@ -1,0 +1,48 @@
+<p>user-name : {{searchTerm}} </p>
+<p>user-Active : {{onlyActive}}</p>
+
+
+<div *ngIf="loading">กำลังโหลด...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<div class="search">
+    <label>
+        ค้นหาชื่อหรือไอดี:
+        <input type="text" [(ngModel)]="searchTerm" placeholder="เช่น Yoshida">
+    </label>
+</div>
+<label>
+    <input type="checkbox" [checked]="onlyActive" (change)="onlyActive = !onlyActive">
+    เฉพาะ Active
+</label>
+
+
+<div *ngFor="let u of filteredUsers">
+    <div *ngIf="editUserId !== u.id">
+        ชื่อ: {{ u.display_name }}
+        <button (click)="startEdit(u)">Edit</button>
+    </div>
+
+    <div *ngIf="editUserId === u.id">
+        <input [(ngModel)]="editName">
+        <button (click)="saveEdit()">Save</button>
+    </div>
+
+    <div>Email: {{ u.email }}</div>
+    <div>ID: {{ u.id }}</div>
+
+    <div>Active: {{ u.is_active }}
+        <button (click)="toggleActive(u)">
+            {{ u.is_active ? 'Deactivate' : 'Activate' }}
+        </button>
+    </div>
+
+    <div>
+        <a [routerLink]="['/users', u.id, 'notes']"
+           [queryParams]="{ name: u.display_name }">
+          ดูโน้ตของผู้ใช้นี้
+        </a>
+    </div>
+
+    <hr />
+</div>
