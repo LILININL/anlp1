@@ -6,6 +6,7 @@ import { UserListDto, UserListService } from 'src/app/users/services/user.servic
   templateUrl: './user-list.component.html'
 })
 export class UsersListComponent implements OnInit {
+  private readonly onlyActiveStorageKey = 'users.onlyActive';
   users: UserListDto[] = [];
   loading = true;
   error = '';
@@ -17,6 +18,7 @@ export class UsersListComponent implements OnInit {
   constructor(private userService: UserListService) { }
 
   ngOnInit(): void {
+    this.restoreOnlyActive();
     this.userService.getUsers().subscribe({
       next: data => {
         this.users = data;
@@ -69,6 +71,28 @@ export class UsersListComponent implements OnInit {
         u.is_active = next;
       }
     });
+  }
+
+  setOnlyActive(value: boolean): void {
+    this.onlyActive = value;
+    try {
+      localStorage.setItem(this.onlyActiveStorageKey, String(value));
+    } catch {
+      console.warn('ไม่สามารถบันทึกการตั้งค่าได้');
+    }
+  }
+
+  private restoreOnlyActive(): void {
+    try {
+      const stored = localStorage.getItem(this.onlyActiveStorageKey);
+      if (stored === 'true') {
+        this.onlyActive = true;
+      } else if (stored === 'false') {
+        this.onlyActive = false;
+      }
+    } catch {
+      console.warn('ไม่สามารถโหลดการตั้งค่าได้');
+    }
   }
 }
 
