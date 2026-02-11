@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NoteDto, NoteService } from 'src/app/notes/services/note.service';
+import { NoteDto, NoteWithProductDto } from 'src/app/notes/models/note.dto';
+import { NoteService } from 'src/app/notes/services/note.service';
 
 @Component({
   selector: 'app-user-notes',
@@ -9,7 +10,7 @@ import { NoteDto, NoteService } from 'src/app/notes/services/note.service';
 export class UserNotesComponent implements OnInit {
   userId = 0;
   userName = '';
-  notes: NoteDto[] = [];
+  notes: NoteWithProductDto[] = [];
   loading = true;
   error = '';
   statusOptions: NoteDto['status'][] = ['open', 'in_progress', 'done'];
@@ -33,7 +34,7 @@ export class UserNotesComponent implements OnInit {
     this.userId = id;
     this.userName = this.route.snapshot.queryParamMap.get('name') || '';
 
-    this.noteService.getNotesByUserId(id).subscribe({
+    this.noteService.getNotesAndProductsByUserId(id).subscribe({
       next: data => {
         this.notes = data;
         this.loading = false;
@@ -45,8 +46,8 @@ export class UserNotesComponent implements OnInit {
     });
   }
 
-  trackById(_i: number, n: NoteDto): number {
-    return n.id;
+  trackById(_i: number, n: NoteWithProductDto): number {
+    return n.note.id;
   }
 
   updateStatus(note: NoteDto, nextStatus: string): void {

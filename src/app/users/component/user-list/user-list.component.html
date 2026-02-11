@@ -12,7 +12,7 @@
     </label>
 </div>
 <label>
-    <input type="checkbox" [checked]="onlyActive" (change)="onlyActive = !onlyActive">
+    <input type="checkbox" [checked]="onlyActive" (change)="setOnlyActive($any($event.target).checked)">
     เฉพาะ Active
 </label>
 
@@ -38,9 +38,8 @@
     </div>
 
     <div>
-        <a [routerLink]="['/users', u.id, 'notes']"
-           [queryParams]="{ name: u.display_name }">
-          ดูโน้ตของผู้ใช้นี้
+        <a [routerLink]="['/users', u.id, 'notes']" [queryParams]="{ name: u.display_name }">
+            ดูโน้ตของผู้ใช้นี้
         </a>
     </div>
 
