@@ -13,11 +13,12 @@ export class UserNotesComponent implements OnInit {
   loading = true;
   error = '';
   statusOptions: NoteDto['status'][] = ['open', 'in_progress', 'done'];
+  apiUrl = globalThis.apiUrl;
 
   constructor(
     private route: ActivatedRoute,
     private noteService: NoteService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
