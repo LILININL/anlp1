@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  color: #111827;
+}
+
+.current-user {
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.users-section {
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e4e9;
+}
+
+.users-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.user-card {
+  padding: 10px 0;
+}
+
+.user-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.search input {
+  margin-left: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-family: inherit;
+}

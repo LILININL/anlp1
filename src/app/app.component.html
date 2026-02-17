@@ -1,6 +1,9 @@
 <nav style="display:flex; gap:12px; margin-bottom:12px;">
-  <a routerLink="/users" routerLinkActive="active">Users</a>
-  <a routerLink="/products" routerLinkActive="active">Products</a>
+  <a routerLink="/login" routerLinkActive="active" *ngIf="(isLoggedIn$ | async) === false">Login</a>
+  <a routerLink="/register" routerLinkActive="active" *ngIf="(isLoggedIn$ | async) === false">Register</a>
+  <a routerLink="/users" routerLinkActive="active" *ngIf="(isLoggedIn$ | async) === true">Users</a>
+  <a routerLink="/products" routerLinkActive="active" *ngIf="(isLoggedIn$ | async) === true">Products</a>
+  <button class="nav-logout" type="button" (click)="logout()" *ngIf="(isLoggedIn$ | async) === true">Logout</button>
 </nav>
 
 <router-outlet></router-outlet>

@@ -1,0 +1,85 @@
+<section class="chat-shell">
+    <div class="online-panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">แชทล่าสุด</div>
+                <div class="panel-sub">คุยต่อได้แม้ผู้ใช้ออฟไลน์</div>
+            </div>
+            <button class="panel-refresh" type="button" (click)="refreshConversations()">รีเฟรช</button>
+        </div>
+
+        <div class="panel-state" *ngIf="conversationsLoading">กำลังโหลดรายการแชท...</div>
+        <div class="panel-state error" *ngIf="conversationsError">{{ conversationsError }}</div>
+
+        <div class="online-list" *ngIf="!conversationsLoading && conversations.length">
+            <button class="online-item" type="button" *ngFor="let c of conversations" (click)="openConversation(c)">
+                <span class="presence-dot" [class.offline]="!c.last_message_at"></span>
+                <div class="online-meta">
+                    <div class="online-name">{{ c.other_display_name || c.name || ('Conversation ' + c.conversation_id) }}</div>
+                    <div class="online-sub">
+                        {{ c.type }} • {{ c.last_message_at || 'ยังไม่มีข้อความ' }}
+                    </div>
+                </div>
+            </button>
+        </div>
+
+        <div class="panel-state" *ngIf="!conversationsLoading && conversations.length === 0">ยังไม่มีรายการแชท</div>
+    </div>
+
+    <div class="online-panel">
+        <div class="panel-header">
+            <div>
+                <div class="panel-title">ออนไลน์ตอนนี้</div>
+                <div class="panel-sub">คลิกเพื่อเริ่มแชททันที</div>
+            </div>
+            <button class="panel-refresh" type="button" (click)="refreshOnlineUsers()">รีเฟรช</button>
+        </div>
+
+        <div class="panel-state" *ngIf="onlineLoading">กำลังโหลดรายชื่อ...</div>
+        <div class="panel-state error" *ngIf="onlineError">{{ onlineError }}</div>
+
+        <div class="online-list" *ngIf="!onlineLoading && onlineUsers.length">
+            <button class="online-item" type="button" *ngFor="let u of onlineUsers" (click)="startDirectChat(u)">
+                <span class="presence-dot"></span>
+                <div class="online-meta">
+                    <div class="online-name">{{ u.display_name }}</div>
+                    <div class="online-sub">{{ u.statusText }}</div>
+                </div>
+            </button>
+        </div>
+
+        <div class="panel-state" *ngIf="!onlineLoading && onlineUsers.length === 0">ยังไม่มีใครออนไลน์</div>
+    </div>
+
+    <div class="chat-panel">
+        <div class="chat-header">
+            <div>
+                <div class="chat-title">{{ activeChatUser?.display_name || 'เลือกคนเพื่อเริ่มคุย' }}</div>
+                <div class="chat-sub" *ngIf="activeChatUser">{{ activeChatUser.statusText }}</div>
+            </div>
+            <div class="chat-actions" *ngIf="activeConversationId">
+                <button class="ghost" type="button" (click)="loadMessages(false)" [disabled]="messagesLoading || !hasMoreMessages">
+                    โหลดก่อนหน้า
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-messages" [class.empty]="!activeConversationId">
+            <div class="panel-state" *ngIf="messagesLoading">กำลังโหลดข้อความ...</div>
+            <div class="panel-state error" *ngIf="messagesError">{{ messagesError }}</div>
+            <div class="panel-state" *ngIf="activeConversationId && !messagesLoading && messages.length === 0">{{ messagesEmptyText }}</div>
+
+            <div class="message" *ngFor="let m of messages" [class.own]="m.sender_user_id === currentUserId">
+                <div class="message-body">{{ m.body }}</div>
+                <div class="message-meta">{{ formatTime(m.sent_at) }}</div>
+            </div>
+
+            <div class="panel-state" *ngIf="!activeConversationId">เลือกคนทางซ้ายเพื่อเริ่มคุย</div>
+        </div>
+
+        <div class="chat-input" *ngIf="activeConversationId">
+            <input type="text" [(ngModel)]="messageText" (keydown.enter)="sendMessage()" placeholder="พิมพ์ข้อความแล้วกด Enter">
+            <button type="button" (click)="sendMessage()" [disabled]="messageText.trim().length === 0">ส่ง</button>
+        </div>
+    </div>
+</section>

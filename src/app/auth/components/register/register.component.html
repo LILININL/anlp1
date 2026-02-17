@@ -1,0 +1,33 @@
+<section class="auth-card">
+    <h2>Register</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <label>
+            Email
+            <input type="email" formControlName="email" placeholder="you@example.com" />
+        </label>
+        <div class="error" *ngIf="hasError('email', 'required')">กรุณากรอกอีเมล</div>
+        <div class="error" *ngIf="hasError('email', 'email')">รูปแบบอีเมลไม่ถูกต้อง</div>
+        <div class="error" *ngIf="hasError('email', 'maxlength')">อีเมลต้องไม่เกิน 255 ตัวอักษร</div>
+
+        <label>
+            Password
+            <input type="password" formControlName="password" placeholder="••••••••" />
+        </label>
+        <div class="error" *ngIf="hasError('password', 'required')">กรุณากรอกรหัสผ่าน</div>
+
+        <label>
+            Display name
+            <input type="text" formControlName="display_name" placeholder="ชื่อที่แสดง" />
+        </label>
+        <div class="error" *ngIf="hasError('display_name', 'required')">กรุณากรอกชื่อที่แสดง</div>
+        <div class="error" *ngIf="hasError('display_name', 'maxlength')">ชื่อที่แสดงต้องไม่เกิน 100 ตัวอักษร</div>
+
+        <button type="submit" [disabled]="loading">
+            {{ loading ? 'กำลังสร้างผู้ใช้...' : 'สร้างผู้ใช้' }}
+        </button>
+    </form>
+
+    <p class="success form-error" *ngIf="success">{{ success }}</p>
+    <p class="error form-error" *ngIf="error">{{ error }}</p>
+</section>

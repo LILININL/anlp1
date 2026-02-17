@@ -1,0 +1,12 @@
+.nav-logout {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid #cfd6dd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.nav-logout:hover {
+  background: #f5f7fa;
+}

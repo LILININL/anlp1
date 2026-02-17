@@ -1,47 +1,61 @@
-<p>user-name : {{searchTerm}} </p>
-<p>user-Active : {{onlyActive}}</p>
+<div class="current-user" *ngIf="currentUser$ | async as currentUser">
+    ผู้ใช้งาน: {{ currentUser.display_name }} (ID: {{ currentUser.id }})
+    | Active: {{ getActiveLabelForUser(currentUser.id) }}
+</div>
 
+<app-online-chat [currentUserId]="currentUserId" [users]="users"></app-online-chat>
 
-<div *ngIf="loading">กำลังโหลด...</div>
-<div *ngIf="error">{{ error }}</div>
+<section class="users-section">
+    <div class="users-header">
+        <div>
+            <div class="panel-title">รายชื่อผู้ใช้ทั้งหมด</div>
+            <div class="panel-sub">จัดการชื่อหรือสถานะ Active</div>
+        </div>
+    </div>
 
-<div class="search">
+    <p>user-name : {{searchTerm}} </p>
+    <p>user-Active : {{onlyActive}}</p>
+
+    <div *ngIf="loading">กำลังโหลด...</div>
+    <div *ngIf="error">{{ error }}</div>
+
+    <div class="search">
+        <label>
+            ค้นหาชื่อหรือไอดี:
+            <input type="text" [(ngModel)]="searchTerm" placeholder="เช่น Yoshida">
+        </label>
+    </div>
     <label>
-        ค้นหาชื่อหรือไอดี:
-        <input type="text" [(ngModel)]="searchTerm" placeholder="เช่น Yoshida">
+        <input type="checkbox" [checked]="onlyActive" (change)="setOnlyActive($any($event.target).checked)">
+        เฉพาะ Active
     </label>
-</div>
-<label>
-    <input type="checkbox" [checked]="onlyActive" (change)="setOnlyActive($any($event.target).checked)">
-    เฉพาะ Active
-</label>
 
+    <div class="user-card" *ngFor="let u of filteredUsers">
+        <div *ngIf="editUserId !== u.id" class="user-title">
+            ชื่อ: {{ u.display_name }}
+            <button type="button" class="ghost" (click)="startEdit(u)">Edit</button>
+        </div>
 
-<div *ngFor="let u of filteredUsers">
-    <div *ngIf="editUserId !== u.id">
-        ชื่อ: {{ u.display_name }}
-        <button (click)="startEdit(u)">Edit</button>
+        <div *ngIf="editUserId === u.id" class="user-title">
+            <input [(ngModel)]="editName">
+            <button type="button" (click)="saveEdit()">Save</button>
+        </div>
+
+        <div>Email: {{ u.email }}</div>
+        <div>ID: {{ u.id }}</div>
+
+        <div>Active: {{ u.is_active }}
+            <button type="button" class="ghost" (click)="toggleActive(u)">
+                {{ u.is_active ? 'Deactivate' : 'Activate' }}
+            </button>
+        </div>
+
+        <div>
+            <a [routerLink]="['/users', u.id, 'notes']" [queryParams]="{ name: u.display_name }">
+                ดูโน้ตของผู้ใช้นี้
+            </a>
+        </div>
+
+        <hr />
     </div>
-
-    <div *ngIf="editUserId === u.id">
-        <input [(ngModel)]="editName">
-        <button (click)="saveEdit()">Save</button>
-    </div>
-
-    <div>Email: {{ u.email }}</div>
-    <div>ID: {{ u.id }}</div>
-
-    <div>Active: {{ u.is_active }}
-        <button (click)="toggleActive(u)">
-            {{ u.is_active ? 'Deactivate' : 'Activate' }}
-        </button>
-    </div>
-
-    <div>
-        <a [routerLink]="['/users', u.id, 'notes']" [queryParams]="{ name: u.display_name }">
-            ดูโน้ตของผู้ใช้นี้
-        </a>
-    </div>
-
-    <hr />
-</div>
+</section>
