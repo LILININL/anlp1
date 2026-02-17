@@ -1,16 +1,24 @@
 .chat-shell {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 280px 1fr;
   gap: 12px;
   padding: 12px;
   border: 1px solid #e2e4e9;
   border-radius: 8px;
   background: #ffffff;
   margin-bottom: 16px;
+  min-height: 420px;
+  position: relative;
+}
+
+.chat-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .online-panel,
-.chat-panel {
+.chat-popup {
   background: #ffffff;
   border-radius: 8px;
   padding: 12px;
@@ -47,10 +55,24 @@
   cursor: pointer;
 }
 
+.chat-close {
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 6px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .panel-refresh:hover,
 .ghost:hover,
 .chat-input button:hover {
   background: #f3f4f6;
+}
+
+.chat-close:hover {
+  background: #fecaca;
 }
 
 .panel-state {
@@ -67,7 +89,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 320px;
+  max-height: 260px;
   overflow: auto;
 }
 
@@ -113,10 +135,31 @@
   color: #6b7280;
 }
 
-.chat-panel {
+.chat-stage {
+  position: relative;
+  min-height: 340px;
+  border-radius: 8px;
+  border: 1px dashed #e2e4e9;
+  background: linear-gradient(135deg, #f9fafb 0%, #ffffff 60%);
+}
+
+.stage-hint {
+  color: #6b7280;
+  font-size: 13px;
+  padding: 16px;
+}
+
+.chat-popup {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 320px;
+  height: 420px;
   display: flex;
   flex-direction: column;
-  min-height: 340px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.16);
+  animation: chat-pop 180ms ease-out;
+  z-index: 50;
 }
 
 .chat-header {
@@ -147,6 +190,7 @@
   border: 1px solid #e2e4e9;
   background: #ffffff;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .chat-messages.empty {
@@ -157,14 +201,15 @@
   max-width: 72%;
   padding: 8px 10px;
   border-radius: 6px;
-  background: #f3f4f6;
+  background: #e0f2fe;
+  color: #0f172a;
   align-self: flex-start;
 }
 
 .message.own {
   align-self: flex-end;
-  background: #e5e7eb;
-  color: #111827;
+  background: #dcfce7;
+  color: #14532d;
 }
 
 .message-meta {
@@ -187,11 +232,29 @@
   font-family: inherit;
 }
 
+@keyframes chat-pop {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @media (max-width: 960px) {
   .chat-shell {
     grid-template-columns: 1fr;
   }
   .online-list {
     max-height: 220px;
+  }
+
+  .chat-popup {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    height: 60vh;
   }
 }

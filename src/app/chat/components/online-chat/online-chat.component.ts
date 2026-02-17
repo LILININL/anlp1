@@ -35,6 +35,7 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
     private pingHandle: number | null = null;
     activeConversationId: number | null = null;
     activeChatUser: OnlineUserView | null = null;
+    chatPopupOpen = false;
     messages: MessageDto[] = [];
     messagesLoading = false;
     messagesError = '';
@@ -42,6 +43,7 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
     messageText = '';
     hasMoreMessages = false;
     private readonly pageSize = 30;
+    private pendingScrollAdjust: { top: number; height: number } | null = null;
 
     constructor(private chatService: ChatService) { }
 
@@ -146,6 +148,7 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     openConversation(convo: ConversationSummaryDto): void {
+        this.chatPopupOpen = true;
         this.activeConversationId = convo.conversation_id;
         this.activeChatUser = this.resolveChatUser(convo.other_user_id || undefined, convo.other_display_name || undefined);
         this.messages = [];
@@ -165,6 +168,7 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
             this.messagesError = 'ยังไม่พบข้อมูลผู้ใช้ที่เข้าสู่ระบบ';
             return;
         }
+        this.chatPopupOpen = true;
         this.activeChatUser = user;
         this.messages = [];
         this.messagesError = '';
@@ -208,6 +212,7 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
                     this.messages = this.mergeMessages(this.messages, sorted, false);
                 } else {
                     this.messages = this.mergeMessages(this.messages, sorted, true);
+                    this.adjustScrollAfterPrepend();
                 }
                 this.hasMoreMessages = data.length >= this.pageSize;
                 this.messagesLoading = false;
@@ -223,6 +228,20 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
         });
     }
 
+    onMessagesScroll(event: Event): void {
+        if (!this.activeConversationId || this.messagesLoading || !this.hasMoreMessages) {
+            return;
+        }
+
+        const target = event.target as HTMLElement | null;
+        if (!target) return;
+
+        if (target.scrollTop <= 0) {
+            this.pendingScrollAdjust = { top: target.scrollTop, height: target.scrollHeight };
+            this.loadMessages(false);
+        }
+    }
+
     sendMessage(): void {
         if (!this.activeConversationId) return;
         const body = this.messageText.trim();
@@ -235,6 +254,17 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
                 this.messagesError = 'ส่งข้อความไม่สำเร็จ';
             }
         });
+    }
+
+    closeChat(): void {
+        this.chatPopupOpen = false;
+        this.activeConversationId = null;
+        this.activeChatUser = null;
+        this.messages = [];
+        this.messagesError = '';
+        this.messagesLoading = false;
+        this.hasMoreMessages = false;
+        this.messageText = '';
     }
 
     formatTime(value: string | undefined): string {
@@ -255,6 +285,7 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
         if (!message || !message.conversation_id) return;
 
         if (message.conversation_id !== this.activeConversationId) {
+            this.chatPopupOpen = true;
             this.activeConversationId = message.conversation_id;
             this.activeChatUser = this.resolveChatUser(message.sender_user_id);
             this.messages = this.mergeMessages(this.messages, [message], false);
@@ -383,6 +414,21 @@ export class OnlineChatComponent implements OnInit, OnDestroy, OnChanges {
             const el = document.querySelector('.chat-messages');
             if (el instanceof HTMLElement) {
                 el.scrollTop = el.scrollHeight;
+            }
+        }, 0);
+    }
+
+    private adjustScrollAfterPrepend(): void {
+        if (!this.pendingScrollAdjust) return;
+
+        const previous = this.pendingScrollAdjust;
+        this.pendingScrollAdjust = null;
+
+        setTimeout(() => {
+            const el = document.querySelector('.chat-messages');
+            if (el instanceof HTMLElement) {
+                const newHeight = el.scrollHeight;
+                el.scrollTop = newHeight - previous.height + previous.top;
             }
         }, 0);
     }

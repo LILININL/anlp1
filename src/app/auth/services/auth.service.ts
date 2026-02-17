@@ -19,7 +19,12 @@ export class AuthService {
         return apiUrl;
     }
 
-    constructor(private http: HttpClient, private tokenService: AuthTokenService) { }
+    constructor(private http: HttpClient, private tokenService: AuthTokenService) {
+        const token = this.tokenService.getToken();
+        if (token && this.tokenService.isTokenExpired(token)) {
+            this.logout();
+        }
+    }
 
     login(payload: LoginRequest): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.apiUrl}/login`, payload).pipe(
@@ -58,6 +63,12 @@ export class AuthService {
     }
 
     isLoggedIn(): boolean {
+        const token = this.tokenService.getToken();
+        if (!token || this.tokenService.isTokenExpired(token)) {
+            this.logout();
+            return false;
+        }
+
         return this.loggedInSubject.value;
     }
 
